@@ -9,9 +9,7 @@ To install GoSnap, simply download the latest release for your platform from the
 Alternatively, you can build GoSnap from source by cloning this repository and running:
 
 ```
-shCopy code
 go build
-
 ```
 
 ## **Usage**
@@ -19,7 +17,6 @@ go build
 GoSnap is designed to be simple and intuitive to use. To capture a snapshot of your system, simply run:
 
 ```
-shCopy code
 gosnap capture
 ```
 
