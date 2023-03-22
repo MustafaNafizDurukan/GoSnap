@@ -21,7 +21,6 @@ GoSnap is designed to be simple and intuitive to use. To capture a snapshot of y
 ```
 shCopy code
 gosnap capture
-
 ```
 
 This will generate a detailed report of your system's current state and save it to a timestamped file in the current directory.
