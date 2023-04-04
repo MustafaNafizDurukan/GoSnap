@@ -17,6 +17,7 @@ var (
 	newProcesses = make([]*types.ProcessInfo, 0)
 )
 
+// takeSnapshots take snapshots during given time and stores them into snapshots map.
 func takeSnapshots(givenSeconds time.Duration) {
 	var err error
 
@@ -35,6 +36,7 @@ func takeSnapshots(givenSeconds time.Duration) {
 	})
 }
 
+// takeSnapshot takes snapshot of current processes
 func takeSnapshot(i int, baseline []*types.ProcessInfo) {
 	// Take snapshot
 	snapshot, err := collect.Processes()
@@ -55,6 +57,7 @@ func takeSnapshot(i int, baseline []*types.ProcessInfo) {
 	}
 }
 
+// contians checks whether given item is in baseline or not.
 func contains(baseline []*types.ProcessInfo, item *types.ProcessInfo) bool {
 	for _, baselineItem := range baseline {
 		if baselineItem.Process.Pid == item.Process.Pid &&
@@ -66,6 +69,7 @@ func contains(baseline []*types.ProcessInfo, item *types.ProcessInfo) bool {
 	return false
 }
 
+// saveJson saves taken processes to json file
 func saveJson() {
 	// Creating JSON files
 	processesFile, err := os.Create("processes.json")
