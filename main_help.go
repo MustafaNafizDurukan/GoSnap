@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/mustafanafizdurukan/GoSnap/pkg/collect"
+	"github.com/mustafanafizdurukan/GoSnap/pkg/counter"
 	"github.com/mustafanafizdurukan/GoSnap/pkg/types"
 )
 
@@ -16,7 +17,7 @@ var (
 	newProcesses = make([]*types.ProcessInfo, 0)
 )
 
-func takeSnapshots(givenSeconds int) {
+func takeSnapshots(givenSeconds time.Duration) {
 	var err error
 
 	// Take baseline snapshot
@@ -27,13 +28,11 @@ func takeSnapshots(givenSeconds int) {
 	}
 	snapshots.Store(0, baseline)
 
-	// Loop until time limit is reached
-	for i := 1; i <= givenSeconds; i++ {
-		go takeSnapshot(i, baseline)
-
-		// Sleep for 1 second before taking next snapshot
-		time.Sleep(time.Second)
-	}
+	var i int
+	counter.Start(givenSeconds, func() {
+		takeSnapshot(i, baseline)
+		i++
+	})
 }
 
 func takeSnapshot(i int, baseline []*types.ProcessInfo) {
@@ -69,38 +68,25 @@ func contains(baseline []*types.ProcessInfo, item *types.ProcessInfo) bool {
 
 func saveJson() {
 	// Creating JSON files
-	allProcessesFile, err := os.Create("all_processes.json")
+	processesFile, err := os.Create("processes.json")
 	if err != nil {
 		fmt.Println("Error creating all_processes.json file:", err)
 		os.Exit(1)
 	}
-	defer allProcessesFile.Close()
+	defer processesFile.Close()
 
-	newProcessesFile, err := os.Create("new_processes.json")
-	if err != nil {
-		fmt.Println("Error creating new_processes.json file:", err)
-		os.Exit(1)
-	}
-	defer newProcessesFile.Close()
+	baselineAny, _ := snapshots.Load(0)
+	baseline := baselineAny.([]*types.ProcessInfo)
 
-	snapshotMap := make(map[int][]*types.ProcessInfo)
-	snapshots.Range(func(key, value interface{}) bool {
-		snapshotMap[key.(int)] = value.([]*types.ProcessInfo)
-		return true
-	})
+	allProcesses := make(map[string][]*types.ProcessInfo)
+	allProcesses["baseline_processes"] = baseline
+	allProcesses["new_processes"] = newProcesses
 
 	// Save new processes to  JSON files
-	allProcessesJSON, err := json.MarshalIndent(snapshotMap, "", "    ")
+	allProcessesJSON, err := json.MarshalIndent(allProcesses, "", "    ")
 	if err != nil {
 		fmt.Println("Error marshalling all processes:", err)
 		os.Exit(1)
 	}
-	allProcessesFile.Write(allProcessesJSON)
-
-	newProcessesJSON, err := json.MarshalIndent(newProcesses, "", "    ")
-	if err != nil {
-		fmt.Println("Error marshalling new processes:", err)
-		os.Exit(1)
-	}
-	newProcessesFile.Write(newProcessesJSON)
+	processesFile.Write(allProcessesJSON)
 }

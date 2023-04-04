@@ -18,7 +18,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	takeSnapshots(int(givenTime.Seconds()))
+	takeSnapshots(givenTime)
 
 	saveJson()
 }
