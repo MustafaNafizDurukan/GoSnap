@@ -2,6 +2,9 @@
 
 GoSnap is a lightweight command-line tool for capturing process snapshots on Windows, macOS, and Linux systems. It allows users to quickly and easily generate detailed reports of the current state of their system, including information on running processes, resource utilization, and more.
 
+[![GoSnap Usage Video](https://img.youtube.com/vi/9DEV7AAU8Hk/0.jpg)](https://www.youtube.com/watch?v=9DEV7AAU8Hk)
+
+
 ## **Installation**
 
 To install GoSnap, simply download the latest release for your platform from the **[GitHub releases page](https://github.com/MustafaNafizDurukan/gosnap/releases)** and extract the binary to a directory in your PATH.
