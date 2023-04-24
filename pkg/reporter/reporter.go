@@ -1,9 +1,14 @@
 package reporter
 
-import "github.com/mustafanafizdurukan/GoSnap/pkg/types"
+import (
+	"sync"
+
+	"github.com/mustafanafizdurukan/GoSnap/pkg/types"
+)
 
 type Reporter struct {
-	reporters []typeReportFunc
+	reporters     []typeReportFunc
+	reporterMutex sync.Mutex
 }
 
 type typeReportFunc func(...*types.ProcessInfo)
@@ -14,13 +19,15 @@ func New(reporterFuncs ...typeReportFunc) *Reporter {
 	}
 
 	r.reporters = append(r.reporters, print)
-	r.reporters = append(r.reporters, saveJson)
+	r.reporters = append(r.reporters, saveDB)
 
 	return &r
 }
 
 func (r *Reporter) Report(processes ...*types.ProcessInfo) {
-	for _, r := range r.reporters {
-		r(processes...)
+	for _, report := range r.reporters {
+		r.reporterMutex.Lock()
+		report(processes...)
+		r.reporterMutex.Unlock()
 	}
 }

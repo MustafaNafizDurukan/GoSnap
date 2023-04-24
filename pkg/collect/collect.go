@@ -55,11 +55,6 @@ func Processes() ([]*types.ProcessInfo, error) {
 			numThreads = 0
 		}
 
-		memInfo, err := proc.MemoryInfo()
-		if err != nil {
-			memInfo = &process.MemoryInfoStat{}
-		}
-
 		var ppid int32
 		pp, err := proc.Parent()
 		if err != nil {
@@ -81,7 +76,6 @@ func Processes() ([]*types.ProcessInfo, error) {
 			CreateTime:      time.Unix(int64(createTime/1000), 0),
 			IOCountersRead:  ioCounters.ReadBytes,
 			IOCountersWrite: ioCounters.WriteBytes,
-			MemoryInfo:      memInfo,
 		})
 
 	}
