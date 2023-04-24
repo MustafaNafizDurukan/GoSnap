@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"time"
+
+	"github.com/mustafanafizdurukan/GoSnap/internal/snapshottaker"
 )
 
 func main() {
@@ -18,7 +20,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	takeSnapshots(givenTime)
+	welcome()
 
-	saveJson()
+	// takeSnapshots(givenTime)
+
+	st := snapshottaker.New(givenTime)
+	st.Start()
+
+	// saveJson()
 }
