@@ -14,6 +14,7 @@ func New(reporterFuncs ...typeReportFunc) *Reporter {
 	}
 
 	r.reporters = append(r.reporters, print)
+	r.reporters = append(r.reporters, saveJson)
 
 	return &r
 }

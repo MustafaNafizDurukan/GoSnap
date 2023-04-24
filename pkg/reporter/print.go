@@ -17,14 +17,18 @@ var (
 func print(processes ...*types.ProcessInfo) {
 	if !isTablePrinted {
 		isTablePrinted = true
-		fmt.Fprintf(writer, "Process Name\tPID\tPPID\t\n")
+		fmt.Fprintf(writer, "Type\tProcess Name\tPID\tPPID\t\n")
 	}
 
-	columnWidth := 34 // Minimum width for the first column
+	nameWidth := 34 // Minimum width for the process name
+	typeWidth := 8  // Minimum width for the type
 
 	for _, process := range processes {
-		paddedName := padText(process.Name, columnWidth)
-		fmt.Fprintf(writer, "%s\t%d\t%d\t\n", paddedName, process.PID, process.PPID)
+		process.Name = padText(process.Name, nameWidth)
+		processType := string(process.Type)
+
+		processType = padText(processType, typeWidth)
+		fmt.Fprintf(writer, "%s\t%s\t%d\t%d\t\n", processType, process.Name, process.PID, process.PPID)
 	}
 
 	writer.Flush()

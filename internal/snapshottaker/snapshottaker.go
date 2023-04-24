@@ -3,8 +3,6 @@ package snapshottaker
 import (
 	"fmt"
 	"os"
-	"strings"
-	"text/tabwriter"
 	"time"
 
 	"github.com/mustafanafizdurukan/GoSnap/pkg/collect"
@@ -39,10 +37,11 @@ func (st *SnapshotTaker) Start() {
 		os.Exit(1)
 	}
 
-	printSeperator("Baseline Processes")
+	for i := range st.BaselineProcesses {
+		st.BaselineProcesses[i].Type = types.BaselineProcess
+	}
 	st.reporter.Report(st.BaselineProcesses...)
 
-	printSeperator("New Processes")
 	var i int
 	counter.Start(st.interval, func() {
 		st.takeSnapshot(i)
@@ -62,6 +61,7 @@ func (st *SnapshotTaker) takeSnapshot(i int) {
 	for _, item := range snapshot {
 		if !contains(st.BaselineProcesses, item) && !contains(st.NewProcesses, item) {
 			// If process is not in baseline snapshot, add to newProcesses map
+			item.Type = types.NewProcess
 			st.NewProcesses = append(st.NewProcesses, item)
 
 			if !isEmpty(item) {
@@ -72,11 +72,11 @@ func (st *SnapshotTaker) takeSnapshot(i int) {
 }
 
 // contians checks whether given item is in baseline or not.
-func contains(baseline []*types.ProcessInfo, item *types.ProcessInfo) bool {
-	for _, baselineItem := range baseline {
-		if baselineItem.PID == item.PID &&
-			baselineItem.CreateTime == item.CreateTime &&
-			baselineItem.Cmdline == item.Cmdline {
+func contains(processes []*types.ProcessInfo, item *types.ProcessInfo) bool {
+	for _, processItem := range processes {
+		if processItem.PID == item.PID &&
+			processItem.CreateTime == item.CreateTime &&
+			processItem.Cmdline == item.Cmdline {
 			return true
 		}
 	}
@@ -91,13 +91,4 @@ func isEmpty(item *types.ProcessInfo) bool {
 	}
 
 	return false
-}
-
-func printSeperator(seperator string) {
-	padding := 20
-	s := "*"
-
-	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
-	fmt.Fprintf(tw, "%s\t%s\t%s\n", strings.Repeat(s, padding), seperator, strings.Repeat(s, padding))
-	tw.Flush()
 }

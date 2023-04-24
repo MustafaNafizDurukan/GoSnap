@@ -6,7 +6,15 @@ import (
 	"github.com/shirou/gopsutil/process"
 )
 
+type ProcessType string
+
+const (
+	BaselineProcess ProcessType = "Baseline"
+	NewProcess      ProcessType = "New"
+)
+
 type ProcessInfo struct {
+	Type            ProcessType             // Type of process. It can be whether baseline or new
 	PID             int32                   // Process ID
 	PPID            int32                   // Parent Process ID
 	Name            string                  // Process name

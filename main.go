@@ -22,10 +22,8 @@ func main() {
 
 	welcome()
 
-	// takeSnapshots(givenTime)
+	initialization()
 
 	st := snapshottaker.New(givenTime)
 	st.Start()
-
-	// saveJson()
 }
