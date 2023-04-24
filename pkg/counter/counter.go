@@ -1,6 +1,7 @@
 package counter
 
 import (
+	"sync"
 	"time"
 )
 
@@ -8,14 +9,21 @@ import (
 // The fn function is called every tick, and the loop is stopped
 // when the duration is reached.
 func Start(duration time.Duration, fn func()) {
-	ticker := time.NewTicker(time.Second / 5)
+	ticker := time.NewTicker(time.Second)
 	timer := time.NewTimer(duration)
+
+	var wg sync.WaitGroup
 
 	for {
 		select {
 		case <-ticker.C:
-			fn()
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				fn()
+			}()
 		case <-timer.C:
+			wg.Wait()
 			return
 		}
 	}

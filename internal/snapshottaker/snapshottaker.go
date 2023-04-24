@@ -64,7 +64,9 @@ func (st *SnapshotTaker) takeSnapshot(i int) {
 			// If process is not in baseline snapshot, add to newProcesses map
 			st.NewProcesses = append(st.NewProcesses, item)
 
-			st.reporter.Report(item)
+			if !isEmpty(item) {
+				st.reporter.Report(item)
+			}
 		}
 	}
 }
@@ -81,10 +83,21 @@ func contains(baseline []*types.ProcessInfo, item *types.ProcessInfo) bool {
 	return false
 }
 
+// isEmpty checks if given item is empty.
+func isEmpty(item *types.ProcessInfo) bool {
+	if item.Cmdline == "" &&
+		item.PPID == -1 {
+		return true
+	}
+
+	return false
+}
+
 func printSeperator(seperator string) {
-	padding := 17
+	padding := 20
+	s := "*"
 
 	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
-	fmt.Fprintf(tw, "%s\t%s\t%s\n", strings.Repeat("*", padding), seperator, strings.Repeat("*", padding))
+	fmt.Fprintf(tw, "%s\t%s\t%s\n", strings.Repeat(s, padding), seperator, strings.Repeat(s, padding))
 	tw.Flush()
 }
