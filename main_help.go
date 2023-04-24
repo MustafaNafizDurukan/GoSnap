@@ -85,11 +85,22 @@ func saveJson() {
 	allProcesses["baseline_processes"] = baseline
 	allProcesses["new_processes"] = newProcesses
 
-	// Save new processes to  JSON files
+	// Save new processes to JSON files
 	allProcessesJSON, err := json.MarshalIndent(allProcesses, "", "    ")
 	if err != nil {
 		fmt.Println("Error marshalling all processes:", err)
 		os.Exit(1)
 	}
 	processesFile.Write(allProcessesJSON)
+}
+
+func welcome() {
+	fmt.Println(`
+	 ██████╗  ██████╗ ███████╗███╗   ██╗ █████╗ ██████╗ 
+	██╔════╝ ██╔═══██╗██╔════╝████╗  ██║██╔══██╗██╔══██╗
+	██║  ███╗██║   ██║███████╗██╔██╗ ██║███████║██████╔╝
+	██║   ██║██║   ██║╚════██║██║╚██╗██║██╔══██║██╔═══╝ 
+	╚██████╔╝╚██████╔╝███████║██║ ╚████║██║  ██║██║     
+	 ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     
+ `)
 }
