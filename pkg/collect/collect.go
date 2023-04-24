@@ -1,7 +1,6 @@
 package collect
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/mustafanafizdurukan/GoSnap/pkg/types"
@@ -14,57 +13,65 @@ func Processes() ([]*types.ProcessInfo, error) {
 		return nil, err
 	}
 
-	processList := make([]*types.ProcessInfo, 0)
+	processList := make([]*types.ProcessInfo, 0, 10)
 	for _, proc := range processes {
 		cpuPercent, err := proc.CPUPercent()
 		if err != nil {
-			fmt.Printf("CPUPercent could not have taken: %v \r\n", err)
 			cpuPercent = 0
 		}
+
 		memPercent, err := proc.MemoryPercent()
 		if err != nil {
-			fmt.Printf("MemoryPercent could not have taken: %v \r\n", err)
 			memPercent = 0
 		}
+
 		ioCounters, err := proc.IOCounters()
 		if err != nil {
-			fmt.Printf("IOCounters could not have taken: %v \r\n", err)
 			ioCounters = &process.IOCountersStat{}
 		}
+
 		createTime, err := proc.CreateTime()
 		if err != nil {
-			fmt.Printf("CreateTime could not have taken: %v \r\n", err)
 			createTime = 0
 		}
+
 		name, err := proc.Name()
 		if err != nil {
-			fmt.Printf("Name could not have taken: %v \r\n", err)
 			name = ""
 		}
+
 		username, err := proc.Username()
 		if err != nil {
-			fmt.Printf("Username could not have taken: %v \r\n", err)
 			username = ""
 		}
+
 		cmdline, err := proc.Cmdline()
 		if err != nil {
-			fmt.Printf("Cmdline could not have taken: %v \r\n", err)
 			cmdline = ""
 		}
+
 		numThreads, err := proc.NumThreads()
 		if err != nil {
-			fmt.Printf("NumThreads could not have taken: %v \r\n", err)
 			numThreads = 0
 		}
+
 		memInfo, err := proc.MemoryInfo()
 		if err != nil {
-			fmt.Printf("MemoryInfo could not have taken: %v \r\n", err)
 			memInfo = &process.MemoryInfoStat{}
 		}
 
+		var ppid int32
+		pp, err := proc.Parent()
+		if err != nil {
+			ppid = -1
+		}
+		if pp != nil {
+			ppid = pp.Pid
+		}
+
 		processList = append(processList, &types.ProcessInfo{
-			Process:         proc,
-			Pid:             proc.Pid,
+			PID:             proc.Pid,
+			PPID:            ppid,
 			Name:            name,
 			Cmdline:         cmdline,
 			Username:        username,

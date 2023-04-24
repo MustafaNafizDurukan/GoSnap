@@ -7,8 +7,8 @@ import (
 )
 
 type ProcessInfo struct {
-	Process         *process.Process        // Pointer to the process struct
-	Pid             int32                   // Process ID
+	PID             int32                   // Process ID
+	PPID            int32                   // Parent Process ID
 	Name            string                  // Process name
 	Cmdline         string                  // Command-line arguments
 	Username        string                  // Username of the user who started the process

@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	snapshots    = sync.Map{} //make(map[int][]*types.ProcessInfo)
+	snapshots    = sync.Map{}
 	newProcesses = make([]*types.ProcessInfo, 0)
 )
 
@@ -60,7 +60,7 @@ func takeSnapshot(i int, baseline []*types.ProcessInfo) {
 // contians checks whether given item is in baseline or not.
 func contains(baseline []*types.ProcessInfo, item *types.ProcessInfo) bool {
 	for _, baselineItem := range baseline {
-		if baselineItem.Process.Pid == item.Process.Pid &&
+		if baselineItem.PID == item.PID &&
 			baselineItem.CreateTime == item.CreateTime &&
 			baselineItem.Cmdline == item.Cmdline {
 			return true
@@ -74,7 +74,6 @@ func saveJson() {
 	// Creating JSON files
 	processesFile, err := os.Create("processes.json")
 	if err != nil {
-		fmt.Println("Error creating all_processes.json file:", err)
 		os.Exit(1)
 	}
 	defer processesFile.Close()
