@@ -9,6 +9,10 @@ import (
 // The fn function is called every tick, and the loop is stopped
 // when the duration is reached.
 func Start(duration time.Duration, fn func()) {
+	if duration == 0 {
+		duration = time.Hour
+	}
+
 	ticker := time.NewTicker(time.Second)
 	timer := time.NewTimer(duration)
 

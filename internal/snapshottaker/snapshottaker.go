@@ -15,8 +15,8 @@ type SnapshotTaker struct {
 	interval time.Duration
 	reporter *reporter.Reporter
 
-	BaselineProcesses []*types.ProcessInfo
-	NewProcesses      []*types.ProcessInfo
+	baselineProcesses []*types.ProcessInfo
+	newProcesses      []*types.ProcessInfo
 }
 
 func New(interval time.Duration) *SnapshotTaker {
@@ -31,16 +31,16 @@ func (st *SnapshotTaker) Start() {
 	var err error
 
 	// Take baseline snapshot
-	st.BaselineProcesses, err = collect.Processes()
+	st.baselineProcesses, err = collect.Processes()
 	if err != nil {
 		fmt.Println("Error taking baseline snapshot:", err)
 		os.Exit(1)
 	}
 
-	for i := range st.BaselineProcesses {
-		st.BaselineProcesses[i].Type = types.BaselineProcess
+	for i := range st.baselineProcesses {
+		st.baselineProcesses[i].Type = types.BaselineProcess
 	}
-	st.reporter.Report(st.BaselineProcesses...)
+	st.reporter.Report(st.baselineProcesses...)
 
 	var i int
 	counter.Start(st.interval, func() {
@@ -59,10 +59,10 @@ func (st *SnapshotTaker) takeSnapshot(i int) {
 
 	// Compare snapshot to baseline snapshot
 	for _, item := range snapshot {
-		if !contains(st.BaselineProcesses, item) && !contains(st.NewProcesses, item) {
+		if !contains(st.baselineProcesses, item) && !contains(st.newProcesses, item) {
 			// If process is not in baseline snapshot, add to newProcesses map
 			item.Type = types.NewProcess
-			st.NewProcesses = append(st.NewProcesses, item)
+			st.newProcesses = append(st.newProcesses, item)
 
 			if !isEmpty(item) {
 				st.reporter.Report(item)
